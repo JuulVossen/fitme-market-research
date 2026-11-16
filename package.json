@@ -1,0 +1,10 @@
+{
+  "name": "fitme-market-research",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "preview": "node scripts/preview.mjs",
+    "prepare:runs": "python scripts/prepare_runs.py"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "fitme-run-library-v1",
+  "generated_at": "2026-11-16T21:54:03.170075+00:00",
+  "runs": [
+    {
+      "id": "dishoom-greater-london",
+      "title": "Dishoom Greater London",
+      "region": "London, UK",
+      "description": "Waiter and waitress pathways across the full Greater London region, using Covent Garden as the reference point.",
+      "occupation": "waiter/waitress",
+      "worksites": 74069,
+      "baseline_date": "2026-11-16",
+      "file": "runs/dishoom-greater-london.json.gz",
+      "bytes": 21120651,
+      "sha256": "1e1cf994798347dce2dc986e71192f0d17a055bbb2fad1c70af8ab189b7995eb",
+      "source_sha256": "3641889233f8a7e2080bdf03b66c205f47e1a34520bc35a9432bc17c84250ecf"
+    },
+    {
+      "id": "unifi-atlanta",
+      "title": "Unifi Aviation",
+      "region": "Atlanta, US",
+      "description": "Airport baggage handler pathways around Hartsfield-Jackson Atlanta International Airport, with reviewed workplace evidence.",
+      "occupation": "airport baggage handler",
+      "worksites": 1921,
+      "baseline_date": "2026-11-16",
+      "file": "runs/unifi-atlanta.json.gz",
+      "bytes": 2103820,
+      "sha256": "210ba37674f1a391af83f1a11d1574e98a352fd60e3d5fd0b77b9ac66e3f9388",
+      "source_sha256": "53c40a427360ef8dee31e8e6bde516c4574506888d59adb2af509a433a785041"
+    },
+    {
+      "id": "georgetown-home-care",
+      "title": "Georgetown Home Care",
+      "region": "Washington, DC, US",
+      "description": "Home care aide pathways around Georgetown, with transfer tiers and a directory of reviewed competitors.",
+      "occupation": "home care aide",
+      "worksites": 7340,
+      "baseline_date": "2026-11-12",
+      "file": "runs/georgetown-home-care.json.gz",
+      "bytes": 543959,
+      "sha256": "917921a3f1b2488fac11f8ce965816b4e686d55f0b592893fab33ab693bcad2d",
+      "source_sha256": "44eb0f65f2ac0669a054f06dfa2ac34d1fab17b1f2416323a8b2090016d6779d"
+    }
+  ]
+}
