@@ -76,7 +76,7 @@ function showTierFilters(run) {
 function competitorBadge(entry) {
   const verified = entry.status === 'verified';
   return '<span class="competitor-badge ' + (verified ? 'verified' : 'possible') + '">' +
-    (verified ? 'Verified competitor' : 'Check location') + '</span>';
+    (verified ? 'Potential competitor' : 'Check location') + '</span>';
 }
 
 function publicSources(entry) {
@@ -96,7 +96,7 @@ function showCompetitors() {
   const verified = review.locations.filter(row => row.status === 'verified');
   const mapped = verified.filter(row => row.osm_id);
   $('#competitor-market').textContent = review.market;
-  $('#competitor-coverage').textContent = format(verified.length) + ' verified offices · ' +
+  $('#competitor-coverage').textContent = format(verified.length) + ' potential competitor offices · ' +
     format(mapped.length) + ' linked to map prospects · Reviewed ' + review.checked_on +
     '. Selected offices from the current research.';
   const sites = new Map(dataset.rows.map(site => [site.id, site]));
