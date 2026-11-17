@@ -42,3 +42,5 @@
 .scenario-defaults dd{font-size:25px;letter-spacing:-.6px;font-weight:650;margin:0}
 .portal-footer{max-width:1104px;margin:auto;padding:22px 0 30px;display:flex;justify-content:space-between;gap:15px;border-top:1px solid #dce3dc;font-size:12px;color:#798777}
 @media(max-width:760px){.research-switcher{padding:13px 16px;align-items:flex-start;flex-direction:column;gap:10px}.research-home{font-size:21px}.research-links{gap:3px}.research-links a{padding:8px 9px;font-size:11px}.portal-main{padding:34px 18px 40px}.portal-intro{margin-bottom:27px}.portal-intro h1{letter-spacing:-1px}.portal-lead{font-size:14px}.portal-grid,.simulator-card{grid-template-columns:1fr;gap:18px}.portal-card{padding:24px}.impact-card{padding-top:22px}.portal-card h2{font-size:24px}.portal-card-top{margin-bottom:20px}.simulator-card{gap:28px}.scenario-defaults{padding:22px;gap:22px}.portal-footer{margin:0 18px;font-size:11px;flex-wrap:wrap}}
+
+.simulator-card + .simulator-card{margin-top:22px}
