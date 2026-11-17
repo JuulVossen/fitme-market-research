@@ -1,89 +1,41 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#123d3c">
-  <meta name="description" content="Find nearby employer prospects using ESCO transfer pathways and OpenStreetMap worksites from Geofabrik.">
-  <title>Fitme Market Research | Talent Map</title>
-  <link rel="icon" href="assets/mark.svg">
-  <link rel="stylesheet" href="assets/leaflet.css">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="map.css">
-  <link rel="stylesheet" href="prospects.css">
-  <link rel="stylesheet" href="library.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123d3c">
+<title>Research & Impact | Fitme Market Research</title>
+<meta name="description" content="Explore vertical talent networks and simulate the impact of hiring choices on retention, safety and annual costs.">
+<link rel="icon" href="./assets/mark.svg">
+<link rel="stylesheet" href="./research.css">
+<script src="legacy-run.js"></script>
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="./" aria-label="Talent Map home"><img src="assets/mark.svg" alt="" width="34" height="34"><span>Talent<span class="brand-light">Map</span><small>FITME MARKET RESEARCH</small></span></a>
-    <nav aria-label="Research views"><a class="nav-tab active" href="./" aria-current="page">Run library</a><a id="competitor-nav" class="nav-tab" href="#competitors" hidden>Competitors</a></nav>
-    <button id="close-run" class="button ghost small" type="button" hidden>Close run</button>
-    <button id="open-run" class="button ghost small" type="button">Open local file</button>
-    <input id="run-file" type="file" accept=".json,.gz,application/json,application/gzip" hidden>
-  </header>
+<body class="research-portal">
+<nav class="research-switcher" aria-label="Research sections"><a class="research-home" href="./">Fitme <span>Market Research</span></a><div class="research-links"><a href="./simulated-impact/">Simulated Impact</a><a href="./vertical-network-synergy/">Vertical Network Synergy</a></div></nav>
+<main class="portal-main">
 
-  <main>
-    <section class="intro">
-      <div><p class="eyebrow">FITME MARKET RESEARCH</p><h1 id="company">Talent begins with a pathway.</h1><p id="run-description" class="intro-copy">Explore completed research runs, discover nearby source occupations and inspect the workplace evidence behind each match.</p></div>
-      <div class="study-tag"><span class="status-dot"></span><span><strong id="run-radius">No run loaded</strong><small id="run-date"></small></span></div>
-    </section>
-
-    <section id="empty-state" class="run-library" aria-labelledby="library-title">
-      <div class="library-heading"><div><p class="eyebrow">RESEARCH LIBRARY</p><h2 id="library-title">Explore a market</h2></div><span id="library-count" class="library-count">Loading runs…</span></div>
-      <div id="run-cards" class="run-grid" aria-live="polite"></div>
-      <div class="local-run"><div><h3>Have another research run?</h3><p>Open a saved JSON or compressed JSON file. Local files stay in your browser.</p></div><button id="empty-open" class="button ghost" type="button">Open local file</button></div>
-      <p class="library-note">These runs show evidence-supported occupation pathways at mapped workplaces. Employment, individual skills and vacancies have not been verified.</p>
-    </section>
-    <p id="status" class="prospect-status" role="status" hidden></p>
-    <div id="prospect-content" hidden>
-      <div class="prospect-layout">
-        <aside class="filters" aria-label="Prospect filters">
-          <div class="panel-heading"><h2>Filter prospects</h2><button id="reset" class="text-button" type="button">Reset</button></div>
-          <label class="prospect-field">Business or place<input id="search" type="search" placeholder="Name, city or address"></label>
-          <fieldset id="tier-options" class="prospect-tier-options" hidden><legend>Transfer tiers</legend><div id="tier-choices"></div></fieldset>
-          <fieldset class="report-group-options"><legend>ESCO report groups</legend><div class="group-selection"><button id="groups-all" class="text-button" type="button">All</button><button id="groups-none" class="text-button" type="button">None</button></div><div id="group-choices"></div><p class="field-help">Counts show locations. A location can belong to several groups.</p></fieldset>
-          <details class="advanced-filters"><summary>Individual occupation filters</summary>
-          <label class="prospect-field" id="competitor-filter-field" hidden>Competitor status<select id="competitor-filter"><option value="">All prospects</option><option value="verified">Potential competitors</option><option value="possible">Possible competitor locations</option></select></label>
-          <label class="prospect-field">ESCO transfer band<select id="band"><option value="">Strong and Conditional</option><option value="STRONG">Strong</option><option value="CONDITIONAL">Conditional</option></select></label>
-          <label class="prospect-field">Source occupation<select id="occupation"><option value="">All source occupations</option></select></label>
-          </details>
-          <label class="prospect-field">Distance from focal company <output id="radius-label" for="radius"></output><input id="radius" type="range" min="1" max="1000" value="1000" aria-label="Distance from focal company"></label>
-          <p id="coverage-note" class="field-help"></p>
-          <details class="coverage-detail"><summary>Occupation coverage</summary><div id="coverage-detail"></div></details>
-        </aside>
-
-        <section class="map-column" aria-label="Prospect map">
-          <div class="metrics" aria-live="polite">
-            <div class="metric"><span class="metric-label">Supported businesses</span><strong id="metric-sites">0</strong><small>Within current filters</small></div>
-            <div class="metric"><span id="metric-priority-label" class="metric-label">Tier 1–2 businesses</span><strong id="metric-strong">0</strong><small>Within current filters</small></div>
-            <div class="metric"><span class="metric-label">ESCO report groups</span><strong id="metric-roles">0</strong><small>Distinct groups in visible locations</small></div>
-          </div>
-          <div class="map-card">
-            <div class="map-toolbar"><div class="segmented" aria-label="Map display"><button class="active" data-mode="clusters" aria-pressed="true">Clusters</button><button data-mode="locations" aria-pressed="false">Locations</button><button data-mode="breadth" aria-pressed="false">Group breadth</button></div><label class="map-colour-label">Colour by<select id="map-colour"><option value="groups">ESCO report group</option><option value="tiers">Transfer tier</option></select></label><button id="fit-map" class="button ghost small" type="button">Fit company area</button></div>
-            <div id="map" aria-label="Interactive map of nearby employer prospects"></div>
-            <div class="map-key"><span class="key-dot"></span><span id="map-key-copy">Cluster size reflects the number of matching worksites. Colour shows the most frequent ESCO job group.</span></div>
-          </div>
-        </section>
-      </div>
-
-      <section class="business-section" aria-labelledby="prospects-heading">
-        <div class="section-heading"><div><h2 id="prospects-heading">Supported businesses <span id="business-count" class="count-pill"></span></h2><p class="muted"><span id="ranking-description">Ranked by strongest visible pathway, then distance.</span> Employment and vacancies are unverified.</p></div><div class="prospect-actions"><button id="download-run" class="button ghost small" type="button">Download run JSON</button><button id="export-locations" class="button ghost small" type="button">Export businesses</button><button id="export" class="button secondary" type="button">Export matched occupations</button></div></div>
-        <div class="table-wrap"><table><thead><tr><th scope="col">Business</th><th scope="col">ESCO report groups</th><th scope="col" id="tier-column" hidden>Worksite tier</th><th scope="col">Best transfer band</th><th scope="col">Distance</th></tr></thead><tbody id="business-table"></tbody></table></div>
-        <div class="table-footer"><span id="table-range" aria-live="polite"></span><div><button id="previous" class="button ghost small" type="button">Previous</button><button id="next" class="button ghost small" type="button">Next</button></div></div>
-      </section>
-      <section id="competitors" class="business-section competitor-directory" aria-labelledby="competitor-heading" hidden>
-        <div class="section-heading">
-          <div><h2 id="competitor-heading">Competitor directory</h2><p class="muted" id="competitor-market"></p><p class="muted" id="competitor-coverage"></p></div>
-          <button id="export-competitors" class="button secondary" type="button">Export competitors</button>
-        </div>
-        <div class="table-wrap"><table><thead><tr><th scope="col">Provider / office</th><th scope="col">Status</th><th scope="col">Transfer tier</th><th scope="col">Service overlap and sources</th><th scope="col">Location</th></tr></thead><tbody id="competitor-table"></tbody></table></div>
-      </section>
-    </div>
-  </main>
-
-  <footer class="site-footer"><span>Fitme Market Research <span class="footer-divider">/</span> Talent Map</span><span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · Geofabrik extracts · ESCO</span></footer>
-  <dialog id="detail-dialog" class="detail-dialog" aria-labelledby="detail-title"><div class="dialog-head"><span class="eyebrow">LOCATION RECORD</span><button id="close-dialog" class="icon-button" type="button" aria-label="Close details">×</button></div><div id="dialog-body"></div></dialog>
-  <script src="assets/leaflet.js"></script>
-  <script type="module" src="prospects.mjs"></script>
+<section class="portal-intro">
+  <p class="portal-eyebrow">FITME MARKET RESEARCH</p>
+  <h1>Market research.<br>Measurable hiring impact.</h1>
+  <p class="portal-lead">Explore local talent networks and simulate how hiring choices affect retention, safety and annual costs.</p>
+</section>
+<div class="portal-grid">
+  <article class="portal-card impact-card">
+    <div class="portal-card-top"><span class="portal-number">01</span><span class="portal-tag">HIRING SCENARIOS</span></div>
+    <h2>Simulated Impact</h2>
+    <p>Model how changes in the hiring mix affect expected driver churn, accidents and annual costs.</p>
+    <div class="portal-detail"><strong>Paper Transport</strong><span>FitScore hiring simulator · One-year projection</span></div>
+    <a class="portal-action" href="simulated-impact/">Explore Simulated Impact <span aria-hidden="true">→</span></a>
+  </article>
+  <article class="portal-card">
+    <div class="portal-card-top"><span class="portal-number">02</span><span class="portal-tag">TALENT NETWORKS</span></div>
+    <h2>Vertical Network Synergy</h2>
+    <p>Explore nearby employers and source occupations through mapped workplaces and ESCO transfer pathways.</p>
+    <div class="portal-detail"><strong>Talent Map</strong><span>Dishoom · Unifi Aviation · Georgetown Home Care</span></div>
+    <a class="portal-action" href="vertical-network-synergy/">Explore Vertical Network Synergy <span aria-hidden="true">→</span></a>
+  </article>
+</div>
+</main>
+<footer class="portal-footer">Fitme Market Research <span>Workforce intelligence</span></footer>
 </body>
 </html>

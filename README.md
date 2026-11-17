@@ -1,8 +1,31 @@
 # Fitme Market Research
 
-Talent Map and a library of completed workplace research runs, ready for GitHub Pages.
+A GitHub Pages site with two sections: **Simulated Impact** for hiring outcome models and **Vertical Network Synergy** for Talent Map and completed workplace research.
 
-The site lives in `docs/`. There is no build step or server dependency. Each run has a shareable `?run=<id>` map link and a compressed JSON download. Local JSON and gzip files can also be opened without uploading them.
+The site lives in `docs/`. There is no build step or server dependency.
+
+## Site structure
+
+- `/` — market research home and section navigation.
+- `/simulated-impact/` — hiring simulation library.
+- `/simulated-impact/paper-transport/` — Paper Transport FitScore Hiring Simulator.
+- `/vertical-network-synergy/` — Talent Map and completed research runs.
+- `/runs/` — existing research downloads and catalog; their URLs are unchanged.
+
+Map links use `vertical-network-synergy/?run=<id>`. Previously shared root `?run=<id>` links redirect to the same run in the new section, preserving the query and fragment. Local JSON and gzip files can still be opened without uploading them.
+
+## Paper Transport simulator
+
+The dashboard uses the approved built-in FitScore distribution and a fixed one-year horizon. Defaults are 6,000 annual driver hires, USD 20,000 per churn event and USD 15,000 per accident. Minimum FitScore and attraction are adjustable; reset and CSV export use the same assumptions.
+
+The embedded fitted models use the supplied values:
+
+- Churn risk: `1 - exp(-0.1529867 * exp(-0.0026785 * FitScore))`.
+- Expected accidents: `365 * exp(-6.6747810 - 0.0012621 * FitScore)`.
+
+Trainer and tenure contributions are held at zero in prediction, as requested; the adjusted FitScore coefficient is retained. Accident exposure is 365 days per hire and is not reduced for churn. The simulator runs in the browser. Only its web page is published; conversation imports and local archives are not included.
+
+For updates, edit `docs/simulated-impact/paper-transport/index.html` and preserve the shared section navigation. The standalone local Paper Transport project remains separate.
 
 ## Included research
 
@@ -14,7 +37,11 @@ Research evidence, scores, tiers and source metadata are preserved. Absolute loc
 
 ## GitHub Pages
 
-Create the public repository `fitme-market-research` under the intended account, push this directory to `main`, then select **Settings → Pages → Deploy from a branch → main → /docs**. GitHub publishes `https://<owner>.github.io/fitme-market-research/`. The `.nojekyll` file makes this a plain static site. All asset and dataset URLs work under the repository subpath.
+Repository: [JuulVossen/fitme-market-research](https://github.com/JuulVossen/fitme-market-research).
+
+Live site: [Fitme Market Research](https://juulvossen.github.io/fitme-market-research/).
+
+Pages deploys from **main → /docs**. Commit and push site changes to `main` to publish. The `.nojekyll` file makes this a plain static site. All asset and dataset URLs work under the repository subpath.
 
 Only `docs/` is published by Pages. Public repository contents and hosted run downloads are publicly accessible.
 

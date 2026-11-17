@@ -45,7 +45,7 @@ export async function initializeLibrary({ openRun, status }) {
         '</p><div class="run-stat"><strong>' + count(run.worksites) + '</strong><span>supported businesses</span></div>' +
         '<div class="run-meta"><span>25-mile radius</span><span>Baseline ' + escape(run.baseline_date) + '</span></div>' +
         '<div class="run-card-actions"><a class="button primary" href="?run=' + encodeURIComponent(run.id) +
-        '">Open map <span aria-hidden="true">↗</span></a><a class="run-download" href="' + escape(run.file) +
+        '">Open map <span aria-hidden="true">↗</span></a><a class="run-download" href="' + escape(new URL(run.file, import.meta.url).href) +
         '" download>Download run <small>.json.gz · ' + downloadSize + '</small></a></div></article>';
     }).join('');
     if (!selectedId) return;

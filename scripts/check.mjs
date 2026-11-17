@@ -1,5 +1,6 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
-import { resolve, join } from 'node:path';
+import { resolve, join, dirname, relative, sep } from 'node:path';
+import { Script } from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
@@ -33,11 +34,27 @@ async function checkFiles(dir) {
   }
 }
 await checkFiles(root);
-const html=await readFile(join(root,'index.html'),'utf8');
-for (const match of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
-  const link=match[1];
-  if (/^(?:https?:|#|\?)/.test(link)) continue;
-  assert.ok(!link.startsWith('/'), 'Root-relative link would break project Pages: ' + link);
-  await stat(resolve(root,link));
+async function checkPages(dir) {
+  for (const item of await readdir(dir,{withFileTypes:true})) {
+    const file=join(dir,item.name);
+    if(item.isDirectory()) { await checkPages(file); continue; }
+    if(!item.name.endsWith('.html')) continue;
+    const html=await readFile(file,'utf8');
+    for (const match of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
+      const link=match[1];
+      if (/^(?:https?:|#|\?)/.test(link)) continue;
+      assert.ok(!link.startsWith('/'), 'Root-relative link would break project Pages: ' + link);
+      let target=resolve(dirname(file),link.split(/[?#]/)[0]);
+      const local=relative(root,target);
+      assert.ok(local!=='..' && !local.startsWith('..'+sep), 'Link escapes published site: ' + link);
+      if((await stat(target)).isDirectory()) target=join(target,'index.html');
+      await stat(target);
+    }
+    for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) {
+      if(match[1].trim()) new Script(match[1],{filename:file});
+    }
+    console.log('PASS page links and scripts:', relative(root,file));
+  }
 }
+await checkPages(root);
 console.log('PASS static links, file sizes and run catalog');
