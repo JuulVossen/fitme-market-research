@@ -39,11 +39,14 @@ export async function initializeLibrary({ openRun, status }) {
     $('#library-count').textContent = runs.length + ' completed research runs';
     $('#run-cards').innerHTML = runs.map((run, index) => {
       const downloadSize = (run.bytes / 1024 / 1024).toFixed(1) + ' MB';
+      const radiusLabel = Number.isFinite(run.radius_meters) && run.radius_meters > 0
+        ? (Math.round(run.radius_meters / 1609.344 * 10) / 10) + '-mile radius'
+        : '25-mile radius';
       return '<article class="run-card"><div class="run-card-top"><span class="run-number">0' + (index + 1) +
         '</span><span class="run-region">' + escape(run.region) + '</span></div><h3>' + escape(run.title) +
         '</h3><p class="run-role">' + escape(run.occupation) + '</p><p class="run-summary">' + escape(run.description) +
         '</p><div class="run-stat"><strong>' + count(run.worksites) + '</strong><span>supported businesses</span></div>' +
-        '<div class="run-meta"><span>25-mile radius</span><span>Baseline ' + escape(run.baseline_date) + '</span></div>' +
+        '<div class="run-meta"><span>' + escape(radiusLabel) + '</span><span>Baseline ' + escape(run.baseline_date) + '</span></div>' +
         '<div class="run-card-actions"><a class="button primary" href="?run=' + encodeURIComponent(run.id) +
         '">Open map <span aria-hidden="true">↗</span></a><a class="run-download" href="' + escape(new URL(run.file, import.meta.url).href) +
         '" download>Download run <small>.json.gz · ' + downloadSize + '</small></a></div></article>';
