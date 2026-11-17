@@ -17,7 +17,7 @@ Map links use `vertical-network-synergy/?run=<id>`. Previously shared root `?run
 
 ## Prime simulator
 
-The dashboard uses the approved built-in FitScore distribution and a fixed one-year horizon. Defaults are 6,000 annual driver hires, USD 20,000 per churn event and USD 15,000 per accident. Minimum FitScore and attraction are adjustable; reset and CSV export use the same assumptions.
+The dashboard uses the approved built-in FitScore distribution and a fixed one-year horizon. Defaults are 6,000 annual driver hires, minimum FitScore 20, attraction 20%, USD 15,000 per churn event and USD 30,000 per accident. Minimum FitScore and attraction are adjustable; reset and CSV export use the same assumptions.
 
 The embedded fitted models use the supplied values:
 
