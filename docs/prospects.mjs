@@ -1,6 +1,6 @@
 import { initializeLibrary, readRunBlob } from './hosted-runs.mjs';
 import { TalentMap } from './map.js';
-import { readRun, filterRun, groupMatches, rankedGroups, targetCounts } from './prospect-data.mjs';
+import { readRun, filterRun, groupMatches, rankedGroups, targetCounts } from './prospect-data.mjs?v=target-counts-1';
 import { renderOsmCard } from './prospect-view.mjs';
 
 const $ = selector => document.querySelector(selector);
