@@ -1,6 +1,6 @@
 import { initializeLibrary, readRunBlob } from './hosted-runs.mjs';
 import { TalentMap } from './map.js';
-import { readRun, filterRun, groupMatches, rankedGroups } from './prospect-data.mjs';
+import { readRun, filterRun, groupMatches, rankedGroups, targetCounts } from './prospect-data.mjs';
 import { renderOsmCard } from './prospect-view.mjs';
 
 const $ = selector => document.querySelector(selector);
@@ -72,7 +72,7 @@ function selectedGroups() {
 
 function showTargetFilters() {
   $('#target-options').hidden = dataset.targets.length < 2;
-  $('#target-choices').innerHTML = dataset.targets.map(target => '<label class="target-job-choice"><input type="checkbox" data-target-job="' + escape(target.id) + '"' + (enabledTargets.has(target.id) ? ' checked' : '') + '><span>' + escape(target.label) + '</span></label>').join('');
+  $('#target-choices').innerHTML = dataset.targets.map(target => '<label class="target-job-choice"><input type="checkbox" data-target-job="' + escape(target.id) + '"' + (enabledTargets.has(target.id) ? ' checked' : '') + '><span>' + escape(target.label) + '</span><span class="group-count target-count" data-target-count="' + escape(target.id) + '" aria-label="0 businesses">0</span></label>').join('');
 }
 
 function showOccupationChoices() {
@@ -203,6 +203,14 @@ function update() {
     search: $('#search').value, band: $('#band').value, occupation: $('#occupation').value, radius, tiers, competitorStatus: $('#competitor-filter').value,
     targets: dataset.targets.length > 1 ? enabledTargets : null,
   };
+  if (dataset.targets.length > 1) {
+    const counts = targetCounts(dataset.rows, baseFilters);
+    for (const counter of document.querySelectorAll('[data-target-count]')) {
+      const count = counts.get(counter.dataset.targetCount) || 0;
+      counter.textContent = format(count);
+      counter.setAttribute('aria-label', format(count) + (count === 1 ? ' business' : ' businesses'));
+    }
+  }
   const beforeGroups = filterRun(dataset.rows, baseFilters);
   availableGroups = rankedGroups(groups, beforeGroups);
   showGroupFilters(availableGroups);

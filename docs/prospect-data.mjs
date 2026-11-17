@@ -190,3 +190,14 @@ export function rankedGroups(groups, rows) {
     .filter(group => group.count > 0)
     .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label) || left.id.localeCompare(right.id));
 }
+
+// Show each target's available businesses before target/group checkbox selections.
+export function targetCounts(rows, filters) {
+  const counts = new Map();
+  for (const row of filterRun(rows, { ...filters, targets: null, groups: null })) {
+    for (const id of new Set(row.matches.map(link => link.role.component).filter(Boolean))) {
+      counts.set(id, (counts.get(id) || 0) + 1);
+    }
+  }
+  return counts;
+}

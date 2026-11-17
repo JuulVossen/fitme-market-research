@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readRun, filterRun, rankedGroups } from '../docs/prospect-data.mjs';
+import { readRun, filterRun, rankedGroups, targetCounts } from '../docs/prospect-data.mjs';
 
 const role = (group, component) => ({ label: group, group, component, band: 'STRONG', score: 42 });
 const roles = { a: role('Airport service', 'airport'), a2: role('Airport service', 'airport'), b: role('Reservations', 'reservations'), c: role('Customer care', 'care'), d: role('Empty group', 'care') };
@@ -49,3 +49,22 @@ assert.throws(() => readRun(invalid), /repeated target/);
 const unknown = structuredClone(input); unknown.occupations.a.component = 'unknown';
 assert.throws(() => readRun(unknown), /unknown target/);
 console.log('PASS tier-aware group counts, sorting, empty groups, multiple target jobs, radius/search/band/occupation filters and legacy runs');
+
+const targetTotals = options => {
+  const counts = targetCounts(dataset.rows, { ...base, ...options });
+  return dataset.targets.map(target => [target.id, counts.get(target.id) || 0]);
+};
+assert.deepEqual(targetTotals({}), [['airport', 2], ['reservations', 4], ['care', 1]], 'count businesses once per target even with multiple occupations');
+assert.deepEqual(targetTotals({ tiers: new Set([1]) }), [['airport', 2], ['reservations', 1], ['care', 0]], 'target counts follow selected worksite tiers');
+assert.deepEqual(targetTotals({ tiers: new Set([2]) }), [['airport', 0], ['reservations', 3], ['care', 1]]);
+assert.deepEqual(targetTotals({ tiers: new Set() }), [['airport', 0], ['reservations', 0], ['care', 0]], 'no selected tiers shows zero for every target');
+assert.deepEqual(targetTotals({ tiers: new Set([4]) }), [['airport', 0], ['reservations', 0], ['care', 0]], 'empty selected tier shows zero');
+assert.deepEqual(targetTotals({ targets: new Set(), groups: new Set() }), targetTotals({}), 'unchecked targets and groups retain comparable available counts');
+assert.deepEqual(targetTotals({ radius: 20 }), [['airport', 1], ['reservations', 2], ['care', 1]], 'target counts follow radius');
+assert.deepEqual(targetTotals({ search: 'Business 4' }), [['airport', 1], ['reservations', 0], ['care', 0]], 'target counts follow search');
+assert.deepEqual(targetTotals({ band: 'CONDITIONAL' }), [['airport', 0], ['reservations', 0], ['care', 0]], 'target counts follow transfer band');
+assert.deepEqual(targetTotals({ occupation: 'a2' }), [['airport', 1], ['reservations', 0], ['care', 0]], 'target counts follow source occupation');
+const differentGroups = structuredClone(dataset.rows);
+differentGroups[0].matches.find(link => link.uri === 'a2').role.group = 'Other airport group';
+assert.equal(targetCounts(differentGroups, base).get('airport'), 2, 'multiple report groups at the same business do not inflate its target count');
+console.log('PASS distinct-business target counts, tier changes, empty states, unchecked targets/groups and other filters');
