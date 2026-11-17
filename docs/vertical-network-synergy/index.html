@@ -43,7 +43,12 @@
           <div class="panel-heading"><h2>Filter prospects</h2><button id="reset" class="text-button" type="button">Reset</button></div>
           <label class="prospect-field">Business or place<input id="search" type="search" placeholder="Name, city or address"></label>
           <fieldset id="tier-options" class="prospect-tier-options" hidden><legend>Transfer tiers</legend><div id="tier-choices"></div></fieldset>
-          <fieldset class="report-group-options"><legend>ESCO report groups</legend><div class="group-selection"><button id="groups-all" class="text-button" type="button">All</button><button id="groups-none" class="text-button" type="button">None</button></div><div id="group-choices"></div><p class="field-help">Counts show locations. A location can belong to several groups.</p></fieldset>
+          <fieldset id="target-options" class="report-group-options" hidden>
+          <legend>Target jobs</legend>
+          <div id="target-choices"></div>
+          <p class="field-help">Select one or more target jobs to show their report groups and businesses.</p>
+        </fieldset>
+        <fieldset class="report-group-options"><legend>ESCO report groups</legend><div class="group-selection"><button id="groups-all" class="text-button" type="button">All</button><button id="groups-none" class="text-button" type="button">None</button></div><div id="group-choices"></div><p class="field-help">Groups with businesses matching your tiers and other filters, largest first. Counts ignore group checkboxes. A business can belong to several groups.</p></fieldset>
           <details class="advanced-filters"><summary>Individual occupation filters</summary>
           <label class="prospect-field" id="competitor-filter-field" hidden>Competitor status<select id="competitor-filter"><option value="">All prospects</option><option value="verified">Potential competitors</option><option value="possible">Possible competitor locations</option></select></label>
           <label class="prospect-field">ESCO transfer band<select id="band"><option value="">Strong and Conditional</option><option value="STRONG">Strong</option><option value="CONDITIONAL">Conditional</option></select></label>

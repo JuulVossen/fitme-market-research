@@ -1,6 +1,6 @@
 {
   "schema": "fitme-run-library-v1",
-  "generated_at": "2026-11-17T10:57:00.149553+00:00",
+  "generated_at": "2026-11-17T11:23:20.627511+00:00",
   "runs": [
     {
       "id": "dishoom-greater-london",
@@ -45,15 +45,15 @@
       "id": "delta-atlanta-customer-service",
       "title": "Delta Air Lines — Customer Service",
       "region": "Atlanta, US",
-      "description": "Separate airport, reservations and shared customer-care pathways, combined within 50 miles of Delta HQ. 144 of 270 unique source occupations have supported locations; employment and vacancies remain unverified.",
+      "description": "Separate airport, reservations and shared customer-care pathways, combined within 25 miles of Delta HQ. 138 of 270 unique source occupations have supported locations; employment and vacancies remain unverified.",
       "occupation": "Delta customer service: Airport / Reservations / Shared care (270 unique source jobs)",
-      "worksites": 22178,
+      "worksites": 11986,
       "baseline_date": "2026-11-17",
       "file": "runs/delta-atlanta-customer-service.json.gz",
-      "bytes": 6878965,
-      "sha256": "661255eadaa181fb98ba241a147af9ce87b0e783d9bdb3980e3ea0f356e45432",
-      "source_sha256": "89ffafc0cb0fa6d3f66139ad779653a9167b2f2be0fbd443087c0b7ba2bde489",
-      "radius_meters": 80467.0
+      "bytes": 3773145,
+      "sha256": "c834fb39e8e0d4591f8e6ca0f1f9637bdd6a6dd77cfb988d57e8d788b87ed894",
+      "source_sha256": "a51df40feca659dd313bbe8209111fea1c168d7452ef8f107217494f0da4add3",
+      "radius_meters": 40233.6
     }
   ]
 }

@@ -1,3 +1,4 @@
+import './filter-check.mjs';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve, join, dirname, relative, sep } from 'node:path';
 import { Script } from 'node:vm';
@@ -24,6 +25,14 @@ for (const entry of catalog.runs) {
   const dataset = readRun(JSON.parse(source));
   assert.equal(dataset.rows.length, entry.worksites);
   assert.ok(dataset.hasTiers);
+  if (entry.id === 'delta-atlanta-customer-service') {
+    assert.equal(dataset.run.focal.radius_meters, 25 * 1609.344);
+    assert.equal(entry.radius_meters, dataset.run.focal.radius_meters);
+    assert.equal(dataset.targets.length, 3);
+    assert.equal(dataset.roles.size, 422);
+    assert.equal(new Set([...dataset.roles.values()].map(role => role.esco_uri)).size, 270);
+    assert.ok(dataset.rows.every(row => row.distance_meters <= entry.radius_meters + 0.05));
+  }
   console.log('PASS', entry.id, dataset.rows.length, 'businesses;', dataset.roles.size, 'occupations;', dataset.groups.length, 'groups');
 }
 async function checkFiles(dir) {

@@ -1,6 +1,6 @@
 import { initializeLibrary, readRunBlob } from './hosted-runs.mjs';
 import { TalentMap } from './map.js';
-import { readRun, filterRun, groupMatches, groupCounts } from './prospect-data.mjs';
+import { readRun, filterRun, groupMatches, rankedGroups } from './prospect-data.mjs';
 import { renderOsmCard } from './prospect-view.mjs';
 
 const $ = selector => document.querySelector(selector);
@@ -14,7 +14,7 @@ const distance = meters => new Intl.NumberFormat('en-US', { maximumFractionDigit
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 
-let dataset, map, groups = [], allSites = new Map(), selected = [], visible = new Map(), page = 0, mode = 'clusters';
+let dataset, map, groups = [], availableGroups = [], enabledGroups = new Set(), enabledTargets = new Set(), selected = [], visible = new Map(), page = 0, mode = 'clusters';
 
 function safeUrl(value) {
   try {
@@ -52,13 +52,37 @@ function groupBadge(group) {
   return '<span class="report-group-badge" style="--group-colour:' + group.color + '"><span class="group-dot"></span>' + escape(group.label) + '</span>';
 }
 
-function showGroupFilters() {
-  $('#group-choices').innerHTML = groups.map(group => '<label class="report-group-choice"><input type="checkbox" data-report-group="' + group.number + '" checked><span class="group-dot" style="--group-colour:' + group.color + '"></span><span>' + escape(group.label) + '</span><span class="group-count" data-group-count="' + group.number + '">0</span></label>').join('');
+function showGroupFilters(available) {
+  const container = $('#group-choices');
+  const focused = document.activeElement?.dataset.reportGroup;
+  const scrollTop = container.scrollTop;
+  const markup = available.map(group => '<label class="report-group-choice"><input type="checkbox" data-report-group="' + escape(group.id) + '"' + (enabledGroups.has(group.id) ? ' checked' : '') + '><span class="group-dot" style="--group-colour:' + group.color + '"></span><span>' + escape(group.label) + '</span><span class="group-count">' + format(group.count) + '</span></label>').join('') ||
+    '<p class="field-help">' + (dataset.targets.length > 1 && !enabledTargets.size ? 'Select at least one target job to show its groups.' : 'No groups have businesses matching these filters.') + '</p>';
+  if (container.innerHTML !== markup) {
+    container.innerHTML = markup;
+    if (focused) [...container.querySelectorAll('[data-report-group]')].find(control => control.dataset.reportGroup === focused)?.focus({ preventScroll: true });
+    container.scrollTop = scrollTop;
+  }
+  $('#groups-all').disabled = $('#groups-none').disabled = available.length === 0;
 }
 
 function selectedGroups() {
-  const selectedNumbers = new Set([...document.querySelectorAll('[data-report-group]:checked')].map(control => Number(control.dataset.reportGroup)));
-  return selectedNumbers.size === groups.length ? null : new Set(groups.filter(group => selectedNumbers.has(group.number)).map(group => group.label));
+  return enabledGroups.size === groups.length ? null : new Set(groups.filter(group => enabledGroups.has(group.id)).map(group => group.label));
+}
+
+function showTargetFilters() {
+  $('#target-options').hidden = dataset.targets.length < 2;
+  $('#target-choices').innerHTML = dataset.targets.map(target => '<label class="target-job-choice"><input type="checkbox" data-target-job="' + escape(target.id) + '"' + (enabledTargets.has(target.id) ? ' checked' : '') + '><span>' + escape(target.label) + '</span></label>').join('');
+}
+
+function showOccupationChoices() {
+  const choices = $('#occupation');
+  const previous = choices.value;
+  choices.replaceChildren(new Option('All source occupations', ''));
+  for (const [uri, role] of [...dataset.roles].sort((a, b) => a[1].label.localeCompare(b[1].label))) {
+    if (dataset.targets.length < 2 || enabledTargets.has(role.component)) choices.add(new Option(role.label + ' · ' + bandName(role.band), uri));
+  }
+  if ([...choices.options].some(option => option.value === previous)) choices.value = previous;
 }
 
 function showTierFilters(run) {
@@ -136,8 +160,9 @@ function openRun(run) {
   }
   dataset = next;
   groups = dataset.groups.map(group => ({ ...group, color: PALETTE[(group.number - 1) % PALETTE.length] }));
-  allSites = new Map(dataset.rows.map(row => [row.id,row]));
-  showGroupFilters();
+  enabledGroups = new Set(groups.map(group => group.id));
+  enabledTargets = new Set(dataset.targets.map(target => target.id));
+  showTargetFilters();
   $('#map-colour').value = 'groups';
   $('#map-colour').querySelector('[value="tiers"]').disabled = !dataset.hasTiers;
   const company = run.focal;
@@ -148,11 +173,8 @@ function openRun(run) {
   const date = String(run.baseline.refreshed_at || '').slice(0, 10);
   $('#run-date').textContent = date ? 'Geofabrik baseline · ' + date : 'Geofabrik baseline';
   $('#prospect-content').hidden = false;
-  const choices = $('#occupation');
-  choices.replaceChildren(new Option('All source occupations', ''));
-  for (const [uri, role] of [...dataset.roles].sort((a, b) => a[1].label.localeCompare(b[1].label))) {
-    choices.add(new Option(role.label + ' · ' + bandName(role.band), uri));
-  }
+  $('#occupation').value = '';
+  showOccupationChoices();
   $('#search').value = '';
   $('#band').value = '';
   $('#radius').value = '1000';
@@ -179,10 +201,11 @@ function update() {
     .map(control => Number(control.dataset.transferTier))) : null;
   const baseFilters = {
     search: $('#search').value, band: $('#band').value, occupation: $('#occupation').value, radius, tiers, competitorStatus: $('#competitor-filter').value,
+    targets: dataset.targets.length > 1 ? enabledTargets : null,
   };
   const beforeGroups = filterRun(dataset.rows, baseFilters);
-  const counts = groupCounts(beforeGroups);
-  for (const group of groups) $('[data-group-count="' + group.number + '"]').textContent = format(counts.get(group.label) || 0);
+  availableGroups = rankedGroups(groups, beforeGroups);
+  showGroupFilters(availableGroups);
   selected = filterRun(beforeGroups, { ...baseFilters, groups: selectedGroups() });
   visible = new Map(selected.map(row => [row.id, row]));
   const plotted = selected.map(row => ({
@@ -224,8 +247,8 @@ function renderTable() {
 }
 
 function details(id) {
-  const row = allSites.get(id);
-  if (!row || !visible.has(id)) return;
+  const row = visible.get(id);
+  if (!row) return;
   const osm = /^osm_(node|way|relation)_(\d+)$/.exec(row.id);
   const siteUrl = safeUrl(row.website);
   const osmUrl = osm ? 'https://www.openstreetmap.org/' + osm[1] + '/' + osm[2] : '';
@@ -328,9 +351,23 @@ $('#business-table').addEventListener('click', event => {
 $('#previous').addEventListener('click', () => { page--; renderTable(); });
 $('#next').addEventListener('click', () => { page++; renderTable(); });
 $('#tier-options').addEventListener('change', update);
-$('#group-choices').addEventListener('change', update);
+$('#group-choices').addEventListener('change', event => {
+  const id = event.target.dataset.reportGroup;
+  if (!id) return;
+  if (event.target.checked) enabledGroups.add(id); else enabledGroups.delete(id);
+  update();
+});
+$('#target-choices').addEventListener('change', event => {
+  const id = event.target.dataset.targetJob;
+  if (!id) return;
+  if (event.target.checked) enabledTargets.add(id); else enabledTargets.delete(id);
+  showOccupationChoices();
+  update();
+});
 for (const id of ['groups-all','groups-none']) $('#' + id).addEventListener('click', () => {
-  for (const control of document.querySelectorAll('[data-report-group]')) control.checked = id === 'groups-all';
+  for (const group of availableGroups) {
+    if (id === 'groups-all') enabledGroups.add(group.id); else enabledGroups.delete(group.id);
+  }
   update();
 });
 $('#map-colour').addEventListener('change', () => {
@@ -360,7 +397,11 @@ function exportCompetitors() {
 }
 
 function resetFilters() {
-  for (const control of document.querySelectorAll('[data-transfer-tier], [data-report-group]')) control.checked = true;
+  for (const control of document.querySelectorAll('[data-transfer-tier]')) control.checked = true;
+  enabledGroups = new Set(groups.map(group => group.id));
+  enabledTargets = new Set(dataset.targets.map(target => target.id));
+  showTargetFilters();
+  showOccupationChoices();
   for (const selector of ['#search', '#band', '#occupation', '#competitor-filter']) $(selector).value = '';
   $('#radius').value = '1000';
   update();

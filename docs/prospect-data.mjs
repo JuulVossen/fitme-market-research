@@ -26,6 +26,7 @@ export function readRun(run) {
       throw new Error('The run contains an invalid ESCO source occupation: ' + uri);
     }
   }
+  const targets = readTargets(run, roles);
   const rows = run.worksites.map(site => {
     if (!site || typeof site.id !== 'string' || ids.has(site.id) || typeof site.name !== 'string' ||
         !coords(site.coordinates) || !Number.isFinite(site.distance_meters) || site.distance_meters < 0 ||
@@ -97,10 +98,10 @@ export function readRun(run) {
     }
     if (linkedRows.some(site => !inventoryIds.has(site.id))) throw new Error('A matched worksite is missing from the inventory.');
   }
-  return { run, rows: [...byId.values()], roles, groups, hasTiers, competitorReview };
+  return { run, rows: [...byId.values()], roles, groups, targets, hasTiers, competitorReview };
 }
 
-export function filterRun(rows, { search, band, occupation, radius, tiers = null, competitorStatus = '', groups = null }) {
+export function filterRun(rows, { search, band, occupation, radius, tiers = null, competitorStatus = '', groups = null, targets = null }) {
   const query = search.trim().toLowerCase();
   const selected = [];
   for (const row of rows) {
@@ -108,7 +109,8 @@ export function filterRun(rows, { search, band, occupation, radius, tiers = null
         (tiers && row.matches.length > 0 && !tiers.has(row.transfer_tier)) ||
         (competitorStatus && row.competitor?.status !== competitorStatus)) continue;
     const matches = row.matches.filter(link => (!band || link.role.band === band) &&
-      (!occupation || link.uri === occupation) && (!groups || groups.has(link.role.group)));
+      (!occupation || link.uri === occupation) && (!groups || groups.has(link.role.group)) &&
+      (!targets || targets.has(link.role.component)));
     if (matches.length) {
       selected.push({ ...row, matches, strong: matches.some(link => link.role.band === 'STRONG') });
     }
@@ -160,4 +162,31 @@ export function groupCounts(rows) {
     for (const label of new Set(row.matches.map(link => link.role.group))) counts.set(label, (counts.get(label) || 0) + 1);
   }
   return counts;
+}
+
+// Target identities come from the run, never from prefixes in display labels.
+export function readTargets(run, roles) {
+  if (run.components === undefined) return [];
+  if (!Array.isArray(run.components)) throw new Error('The target jobs must be an array.');
+  const ids = new Set();
+  const targets = run.components.map(component => {
+    if (!component || typeof component.id !== 'string' || !component.id || ids.has(component.id) ||
+        typeof component.label !== 'string' || !component.label.trim()) {
+      throw new Error('The run contains an invalid or repeated target job.');
+    }
+    ids.add(component.id);
+    return { id: component.id, label: component.label };
+  });
+  if ([...roles.values()].some(role => !ids.has(role.component))) {
+    throw new Error('An occupation refers to an unknown target job.');
+  }
+  return targets;
+}
+
+// Count each business once per group, independently of the group's own checkbox.
+export function rankedGroups(groups, rows) {
+  const counts = groupCounts(rows);
+  return groups.map(group => ({ ...group, count: counts.get(group.label) || 0 }))
+    .filter(group => group.count > 0)
+    .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label) || left.id.localeCompare(right.id));
 }
