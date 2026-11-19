@@ -4,10 +4,10 @@
 (()=>{'use strict';const $=id=>document.getElementById(id);let result=null;const fmt=(v,d=1)=>Number(v).toLocaleString('en-GB',{minimumFractionDigits:d,maximumFractionDigits:d});const money=v=>'$'+Math.round(v).toLocaleString('en-GB');const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 // Deterministic, gently high-skewed reference population on 0..100.
 function builtIn(){let arr=[];for(let s=0;s<=100;s++){let n=Math.round(15+8*s/100);for(let j=0;j<n;j++)arr.push(s)}return arr}const scores=builtIn();
-// Fitted model parameters supplied on 17 November 2026; FitScores use the 0..100 scale.
+// Fitted model parameters supplied on 19 November 2026; FitScores use the 0..100 scale.
 // Cox baseline is uncentered at day 365. Accident offset is log(365);
 // trainer and tenure contributions are omitted as requested.
-const MODEL={"version":"2026-11-17","horizonDays":365,"churn":{"fitscore":-0.0026785,"baselineCumulativeHazard":0.1529867},"accidents":{"intercept":-6.674781,"fitscore":-0.0012621}};
+const MODEL={"version":"2026-11-19","horizonDays":365,"churn":{"fitscore":-0.0026205,"baselineCumulativeHazard":0.782142826804488},"accidents":{"intercept":-6.541252,"fitscore":-0.001003}};
 function churn(f){return -Math.expm1(-MODEL.churn.baselineCumulativeHazard*Math.exp(MODEL.churn.fitscore*f))}
 function accidents(f){return MODEL.horizonDays*Math.exp(MODEL.accidents.intercept+MODEL.accidents.fitscore*f)}
 function mix(min,sel){const eligible=scores.filter(x=>x>=min);if(!eligible.length)return [];const k=sel/100*5;const maxLog=k;let weights=eligible.map(f=>Math.exp(k*f/100-maxLog));const sum=weights.reduce((a,b)=>a+b,0);return eligible.map((f,i)=>({f,w:weights[i]/sum}))}

@@ -19,10 +19,10 @@ Map links use `vertical-network-synergy/?run=<id>`. Previously shared root `?run
 
 The dashboard uses the approved built-in FitScore distribution and a fixed one-year horizon. Defaults are 6,000 annual driver hires, minimum FitScore 20, attraction 20%, USD 15,000 per churn event and USD 30,000 per accident. Minimum FitScore and attraction are adjustable; reset and CSV export use the same assumptions.
 
-The embedded fitted models use the supplied values:
+The embedded fitted models use the values supplied on 19 November 2026:
 
-- Churn risk: `1 - exp(-0.1529867 * exp(-0.0026785 * FitScore))`.
-- Expected accidents: `365 * exp(-6.6747810 - 0.0012621 * FitScore)`.
+- Churn risk: `1 - exp(-0.782142826804488 * exp(-0.0026205 * FitScore))`.
+- Expected accidents: `365 * exp(-6.541252 - 0.001003 * FitScore)`.
 
 Trainer and tenure contributions are held at zero in prediction, as requested; the adjusted FitScore coefficient is retained. Accident exposure is 365 days per hire and is not reduced for churn. The simulator runs in the browser. Only its web page is published; conversation imports and local archives are not included.
 
