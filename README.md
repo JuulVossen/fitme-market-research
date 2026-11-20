@@ -8,14 +8,16 @@ The site lives in `docs/`. There is no build step or server dependency.
 
 - `/` — market research home and section navigation.
 - `/simulated-impact/` — hiring simulation library.
-- `/simulated-impact/prime/` — Prime one-year FitScore Hiring Simulator.
-- `/simulated-impact/paper-transport/` — Paper Transport experienced/inexperienced-driver recruitment simulator.
+- `/simulated-impact/trucking/` — Trucking illustrations.
+- `/simulated-impact/trucking/midsize-carrier/` — experienced/inexperienced-driver recruitment simulator.
+- `/simulated-impact/trucking/large-carrier/` — one-year FitScore Hiring Simulator.
+- `/simulated-impact/homecleaning/`, `/simulated-impact/healthcare/` and `/simulated-impact/hospitality/` — industry collections ready for future illustrations.
 - `/vertical-network-synergy/` — Talent Map and completed research runs.
 - `/runs/` — existing research downloads and catalog; their URLs are unchanged.
 
 Map links use `vertical-network-synergy/?run=<id>`. Previously shared root `?run=<id>` links redirect to the same run in the new section, preserving the query and fragment. Local JSON and gzip files can still be opened without uploading them.
 
-## Prime simulator
+## Large carrier simulator
 
 The dashboard uses the user-supplied FitScore histogram (26,746 observations in twenty 5-point bands) and a fixed one-year horizon. Scores are assumed uniform within each band; the chart combines adjacent bands into 10-point groups. Minimum FitScore clips the bands before the existing attraction weighting is applied; minimum 100 uses the limiting mix at score 100. Defaults are 6,000 annual driver hires, minimum FitScore 20, attraction 20%, USD 15,000 per churn event and USD 30,000 per accident. Minimum FitScore and attraction are adjustable; reset and CSV export use the same assumptions.
 
@@ -26,19 +28,21 @@ The embedded fitted models use the values supplied on 19 November 2026:
 
 Trainer and tenure contributions are held at zero in prediction, as requested; the adjusted FitScore coefficient is retained. Accident exposure is 365 days per hire and is not reduced for churn. The simulator runs in the browser. Only its web page is published; conversation imports and local archives are not included.
 
-For updates, edit `docs/simulated-impact/prime/index.html` and preserve the shared section navigation. The standalone local Prime project remains separate.
+For updates, edit `docs/simulated-impact/trucking/large-carrier/index.html` and preserve the shared section navigation. Internal source provenance remains in the standalone local project.
 
-## Paper Transport simulator
+## Midsize carrier simulator
 
 This is the recruitment-round simulator with **experienced and inexperienced drivers**, separate Match thresholds and exit costs, and a **60-day exit horizon**. It displays expected exits, exit costs, recruitment rounds and threshold-combination heatmaps.
 
-Defaults are 1,000 candidates, 10% experienced candidates, 100 target hires and 25 candidates per recruitment round. Experienced/inexperienced thresholds are 40/60 and costs per 60-day exit are USD 9,000/32,000. The existing simulation and model are preserved; they are separate from the Prime model.
+Defaults are 1,000 candidates, 10% experienced candidates, 100 target hires and 25 candidates per recruitment round. Experienced/inexperienced thresholds are 40/60 and costs per 60-day exit are USD 9,000/32,000. The existing simulation and model are preserved; they are separate from the large carrier model.
 
-For updates, edit `docs/simulated-impact/paper-transport/index.html`. Its navigation styles are embedded to preserve the standalone dashboard's restrictive content security policy.
+For updates, edit `docs/simulated-impact/trucking/midsize-carrier/index.html`. Its navigation styles are embedded to preserve the standalone dashboard's restrictive content security policy.
 
-## Dashboard identities
+## Industry collections
 
-Confirmed by the user on 17 November 2026: **Prime** is the one-year churn/accident dashboard; **Paper Transport** is the experienced/inexperienced-driver dashboard. The initial hosted Paper Transport label was incorrect. Both are now listed separately under Simulated Impact.
+Simulated Impact is organized into Trucking, Homecleaning, Healthcare and Hospitality. Trucking contains the Midsize carrier and Large carrier illustrations; the other collections currently have no published dashboards. Published titles, descriptions and routes use anonymous carrier labels. Local project records retain the internal source provenance.
+
+Each carrier dashboard and its Trucking listing offer **Download HTML**. The files `midsize-carrier.html` and `large-carrier.html` include their own styles, charts, controls and model code for offline use. They open with the dashboard defaults; exporting scenario results remains available inside each file.
 
 ## Included research
 

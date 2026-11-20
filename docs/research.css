@@ -44,3 +44,24 @@
 @media(max-width:760px){.research-switcher{padding:13px 16px;align-items:flex-start;flex-direction:column;gap:10px}.research-home{font-size:21px}.research-links{gap:3px}.research-links a{padding:8px 9px;font-size:11px}.portal-main{padding:34px 18px 40px}.portal-intro{margin-bottom:27px}.portal-intro h1{letter-spacing:-1px}.portal-lead{font-size:14px}.portal-grid,.simulator-card{grid-template-columns:1fr;gap:18px}.portal-card{padding:24px}.impact-card{padding-top:22px}.portal-card h2{font-size:24px}.portal-card-top{margin-bottom:20px}.simulator-card{gap:28px}.scenario-defaults{padding:22px;gap:22px}.portal-footer{margin:0 18px;font-size:11px;flex-wrap:wrap}}
 
 .simulator-card + .simulator-card{margin-top:22px}
+
+/* Industry collections and anonymous dashboard navigation. */
+.impact-library .portal-lead,.impact-library .portal-card p:not(.portal-eyebrow){font-size:1rem}
+.impact-library .portal-eyebrow{font-size:.875rem;letter-spacing:.09em}
+.impact-library .portal-back,.impact-library .portal-action,.impact-library .research-links a,.impact-library .scenario-defaults dt{font-size:.875rem}
+.impact-library .portal-detail strong,.impact-library .portal-detail span{font-size:.875rem}
+.impact-library .industry-status{margin-bottom:22px;color:#477565;font-size:.875rem;font-weight:600}
+.impact-library .industry-card p{flex-grow:1}
+.impact-library .empty-collection{max-width:740px}
+.impact-breadcrumbs{box-sizing:border-box;max-width:1320px;margin:0 auto;padding:18px 24px 0;display:flex;align-items:center;flex-wrap:wrap;gap:10px;font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#65756d}
+.impact-breadcrumbs a{color:#215c4f;text-decoration:none;outline-offset:4px}
+.impact-breadcrumbs a:hover{text-decoration:underline}
+.impact-breadcrumbs a:focus-visible{outline:3px solid #b39146;border-radius:3px}
+@media(max-width:760px){.impact-breadcrumbs{padding:14px 18px 0}.impact-library .portal-main{padding-top:30px}}
+
+.simulator-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.research-portal .portal-download{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 17px;border:1px solid #bfd0c6;border-radius:8px;color:#215c4f;background:#fff;font-size:.875rem;font-weight:600;line-height:1.5;text-decoration:none}
+.research-portal .portal-download:hover{background:#eef5f0}
+.impact-breadcrumbs .dashboard-download{display:inline-flex;align-items:center;margin-left:auto;padding:8px 13px;min-height:40px;border:1px solid #bfd0c6;border-radius:7px;background:#fff;font-weight:600;text-decoration:none}
+.impact-breadcrumbs .dashboard-download:hover{background:#eef5f0}
+@media(max-width:560px){.impact-breadcrumbs .dashboard-download{margin-left:0}}
